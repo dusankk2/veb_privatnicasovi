@@ -1,70 +1,240 @@
-# Getting Started with Create React App
+# Sistem za Zakazivanje Privatnih Časova - Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Opis
 
-## Available Scripts
+Frontend dio web aplikacije koja simulira rad online sistema za zakazivanje termina za privatne časove i konsultacije sa predavačima.
 
-In the project directory, you can run:
+## Karakteristike
 
-### `npm start`
+### Tri tipa korisnika:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. **Gost (Guest)**
+   - Pregled dostupnih predmeta i predavača
+   - Pregled osnovnih informacija o terminima
+   - Redirekcija na prijavu/registraciju za zakazivanje
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+2. **Registrovani korisnik (User)**
+   - Pregled svih dostupnih predmeta
+   - Odabir predavača
+   - Zakazivanje termina
+   - Odabir načina plaćanja
+   - Upravljanje vlastitim terminima
+   - Pregled i ažuriranje profila
 
-### `npm test`
+3. **Administrator (Admin)**
+   - Upravljanje predmetima (dodavanje, izmena, brisanje)
+   - Upravljanje predavačima (dodavanje, izmena, brisanje)
+   - Pregled i organizacija zakazanih termina
+   - Pristup admin panel-u
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Tehnologije
 
-### `npm run build`
+- **React.js** 19.2.5
+- **React Router** v7.14.1 - Za rutiranje
+- **React Bootstrap** 2.10.10 - Za komponente UI-a
+- **React Icons** 5.6.0 - Za ikonice
+- **React Toastify** 11.1.0 - Za notifikacije
+- **Axios** 1.16.0 - Za HTTP zahteve
+- **CSS3** - Za stilizovanje
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Instalacija
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Preduslovi
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Node.js (v14 ili više)
+- npm ili yarn
 
-### `npm run eject`
+### Koraci
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. Klonirajte repozitorijum:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+git clone https://github.com/dusankk2/veb_privatnicasovi.git
+cd veb_privatnicasovi/frontend
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+2. Instalirajte zavisnosti:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npm install
+```
 
-## Learn More
+3. Kreirajte `.env` fajl u root direktorijumu frontend-a:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```env
+REACT_APP_API_URL=http://localhost:5000/api
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+4. Pokrenite development server:
 
-### Code Splitting
+```bash
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Aplikacija će se otvoriti na `http://localhost:3000`
 
-### Analyzing the Bundle Size
+## Struktura Projekta
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```
+frontend/
+├── public/
+│   ├── index.html
+│   ├── manifest.json
+│   └── favicon.ico
+├── src/
+│   ├── components/
+│   │   ├── layout/
+│   │   │   ├── Navbar.jsx
+│   │   │   └── Footer.jsx
+│   │   ├── cards/
+│   │   │   ├── SubjectCard.jsx
+│   │   │   └── TeacherCard.jsx
+│   │   ├── common/
+│   │   │   ├── Loader.jsx
+│   │   │   ├── Message.jsx
+│   │   │   └── CheckoutSteps.jsx
+│   │   ├── auth/
+│   │   │   └── PrivateRoute.jsx
+│   │   └── forms/
+│   │       └── FormContainer.jsx
+│   ├── pages/
+│   │   ├── Home.jsx
+│   │   ├── Login.jsx
+│   │   ├── Register.jsx
+│   │   ├── Booking.jsx
+│   │   ├── Profile.jsx
+│   │   ├── AdminDashboard.jsx
+│   │   ├── MyAppointments.jsx
+│   │   └── NotFound.jsx
+│   ├── context/
+│   │   └── AuthContext.js
+│   ├── utils/
+│   │   ├── api.js
+│   │   └── helpers.js
+│   ├── App.js
+│   ├── App.css
+│   ├── index.js
+│   ├── index.css
+│   ├── constants.js
+│   └── store.js
+├── package.json
+├── package-lock.json
+└── README.md
+```
 
-### Making a Progressive Web App
+## Stranice i Rute
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+| Ruta | Komponenta | Pristup | Opis |
+|------|-----------|--------|------|
+| `/` | Home | Svi | Početna stranica |
+| `/login` | Login | Svi | Prijava korisnika |
+| `/register` | Register | Svi | Registracija novog korisnika |
+| `/booking/:subjectId` | Booking | Registrovani | Zakazivanje Časa |
+| `/profile` | Profile | Registrovani | Profil korisnika |
+| `/admin` | AdminDashboard | Admin | Admin panel |
+| `/my-appointments` | MyAppointments | Registrovani | Moji zakazani termini |
+| `*` | NotFound | Svi | 404 stranica |
 
-### Advanced Configuration
+## Autentifikacija
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Aplicija koristi **AuthContext** za upravljanje autentifikacijom:
 
-### Deployment
+- Token se čuva u `localStorage` 
+- Korisničke informacije su dostupne kroz `useAuth()` hook
+- `PrivateRoute` komponenta štića privatne stranice
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Komunikacija sa Backend-om
 
-### `npm run build` fails to minify
+### API Endpoints (planiran)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```
+POST   /api/auth/login          - Prijava
+POST   /api/auth/register       - Registracija
+GET    /api/subjects            - Lista predmeta
+GET    /api/teachers            - Lista predavača
+GET    /api/appointments        - Moji termini
+POST   /api/appointments        - Kreiranje termina
+GET    /api/admin/dashboard     - Admin panel podaci
+```
+
+## Development
+
+### Dostupne komande
+
+```bash
+# Pokretanje development servera
+npm start
+
+# Pravljenje production build-a
+npm run build
+
+# Pokretanje testova
+npm test
+
+# Eject (ne preporučuje se)
+npm run eject
+```
+
+## CSS Stilizovanje
+
+Aplicija koristi:
+- **CSS3** sa media queries za responzivni dizajn
+- **CSS Grid** i **Flexbox** za layout
+- **CSS Variables** za teme i boje
+- **Transitions** i **Animations** za interaktivnost
+
+## Boje i Tema
+
+- **Primarnią boja**: #007bff (Plava)
+- **Sekundarna boja**: #667eea (Svetloplava)
+- **Uspeh**: #28a745 (Zelena)
+- **Greška**: #dc3545 (Crvena)
+- **Upozorenje**: #ffc107 (Zuta)
+- **Pozadina**: #f5f5f5 (Svetlosiva)
+
+## Responzivni Dizajn
+
+Aplicija je optimizovana za:
+- Desktop računare (1024px i više)
+- Tablete (768px - 1023px)
+- Mobilne uređaje (manje od 768px)
+
+## Poznati Problemi
+
+Nema poznatih problema u ovoj verziji.
+
+## Buduća Poboljšanja
+
+- [ ] Integracija sa backend API-jem
+- [ ] Implementacija Redux-a za kompleksnije stanje
+- [ ] Dodavanje unit testova
+- [ ] Dodavanje end-to-end testova
+- [ ] Implementacija chat-a sa predavačima
+- [ ] Dodavanje video poziva
+- [ ] Notifikacije u realnom vremenu
+- [ ] PWA (Progressive Web App) podrška
+
+## Doprinos
+
+Za doprinos projektu, molimo:
+
+1. Forkujte repozitorijum
+2. Kreirajte branch za vašu funkcionalnost (`git checkout -b feature/AmazingFeature`)
+3. Commitujte vaše izmene (`git commit -m 'Add some AmazingFeature'`)
+4. Push-ujte na branch (`git push origin feature/AmazingFeature`)
+5. Otvorite Pull Request
+
+## Licenca
+
+MIT
+
+## Kontakt
+
+- **Autor**: Dusan Kuzmanovic
+- **GitHub**: [@dusankk2](https://github.com/dusankk2)
+
+## Zahvalnice
+
+- React zajednica
+- Bootstrap za CSS framework
+- Sve zajednice koje su doprinele zavisnostima
