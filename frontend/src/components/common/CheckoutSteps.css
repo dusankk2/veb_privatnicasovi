@@ -1,0 +1,78 @@
+.checkout-steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.step::after {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background-color: #e9ecef;
+  z-index: -1;
+}
+
+.step:last-child::after {
+  display: none;
+}
+
+.step.complete::after {
+  background-color: #28a745;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.step.complete .step-number {
+  background-color: #28a745;
+  color: white;
+}
+
+.step-label {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.step.complete .step-label {
+  color: #28a745;
+}
+
+@media (max-width: 640px) {
+  .checkout-steps {
+    padding: 0;
+  }
+
+  .step-number {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
+
+  .step-label {
+    font-size: 0.75rem;
+  }
+}
