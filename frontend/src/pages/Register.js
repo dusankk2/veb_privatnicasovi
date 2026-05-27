@@ -48,7 +48,7 @@ const Register = () => {
     <div className="form-page" id="register-page">
       <div className="form-container">
         <div className="form-card">
-          <h2>🎓 Kreiraj nalog</h2>
+          <h2> Kreiraj nalog</h2>
           <p className="form-subtitle">Registruj se i zakaži svoj prvi čas</p>
 
           {error && (
