@@ -1,0 +1,98 @@
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { apiLogin } from '../services/api';
+
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (!email || !password) {
+      setError('Molimo popunite sva polja');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const data = await apiLogin(email, password);
+      login(data.user, data.token);
+      navigate(data.user.role === 'admin' ? '/admin' : '/');
+    } catch (err) {
+      setError(err.message || 'Greška prilikom prijave');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="form-page" id="login-page">
+      <div className="form-container">
+        <div className="form-card">
+          <h2>Dobrodošli nazad</h2>
+          <p className="form-subtitle">Prijavite se na vaš nalog</p>
+
+          {error && (
+            <div className="alert alert-error" id="login-error">
+               {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="login-email">Email adresa</label>
+              <input
+                type="email"
+                id="login-email"
+                className="form-control"
+                placeholder="vas@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="login-password">Lozinka</label>
+              <input
+                type="password"
+                id="login-password"
+                className="form-control"
+                placeholder="Unesite lozinku"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-primary form-btn"
+              disabled={loading}
+              id="login-submit"
+            >
+              {loading ? 'Prijavljivanje...' : ' Prijavi se'}
+            </button>
+          </form>
+
+          <div className="form-link">
+            Nemate nalog?{' '}
+            <Link to="/register">Registrujte se</Link>
+          </div>
+
+          <div className="alert alert-info mt-3" style={{ fontSize: '0.8rem' }}>
+             Demo nalozi: <strong>admin@privatnicasovi.rs</strong> (admin) |{' '}
+            <strong>petar@gmail.com</strong> (korisnik) — bilo koja lozinka
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
