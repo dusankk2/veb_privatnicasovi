@@ -1,38 +1,22 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { apiGetMojiTermini, apiDeleteTermin } from '../services/api';
+import { useGetMojiTerminiQuery, useDeleteTerminMutation } from '../slices/terminiApiSlice';
 
 const statusConfig = {
-  zakazan: { badge: 'badge-primary', label: ' Zakazan' },
-  zavrsen: { badge: 'badge-success', label: ' Završen' },
-  otkazan: { badge: 'badge-danger', label: ' Otkazan' },
+  zakazan: { badge: 'badge-primary', label: '📅 Zakazan' },
+  zavrsen: { badge: 'badge-success', label: '✅ Završen' },
+  otkazan: { badge: 'badge-danger', label: '❌ Otkazan' },
 };
 
 const MojiTermini = () => {
-  const { user } = useAuth();
-  const [termini, setTermini] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('svi');
-
-  useEffect(() => {
-    const fetchTermini = async () => {
-      try {
-        const data = await apiGetMojiTermini(user?._id);
-        setTermini(data);
-      } catch (err) {
-        console.error('Greška:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (user) fetchTermini();
-  }, [user]);
+  
+  const { data: termini = [], isLoading: loading, isError } = useGetMojiTerminiQuery();
+  const [deleteTermin] = useDeleteTerminMutation();
 
   const handleCancel = async (id) => {
     if (!window.confirm('Da li ste sigurni da želite da otkažete termin?')) return;
     try {
-      await apiDeleteTermin(id);
-      setTermini(termini.filter((t) => t._id !== id));
+      await deleteTermin(id).unwrap();
     } catch (err) {
       alert('Greška prilikom otkazivanja');
     }
@@ -46,6 +30,14 @@ const MojiTermini = () => {
     return (
       <div className="loading">
         <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="alert alert-danger text-center mt-4">
+        Došlo je do greške prilikom učitavanja termina.
       </div>
     );
   }

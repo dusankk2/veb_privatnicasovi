@@ -1,14 +1,17 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
 import { useState } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../../slices/authSlice';
 
 const Navbar = () => {
-  const { user, isAuth, logout } = useAuth();
+  const { userInfo: user } = useSelector((state) => state.auth);
+  const isAuth = !!user;
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
-    logout();
+    dispatch(logout());
     setMenuOpen(false);
     navigate('/');
   };
@@ -19,7 +22,7 @@ const Navbar = () => {
     <nav className="navbar" id="main-navbar">
       <div className="navbar-inner">
         <Link to="/" className="navbar-logo" onClick={closeMenu}>
-          <span className="logo-icon"></span>
+          <span className="logo-icon">📚</span>
           <span>Privatni Časovi</span>
         </Link>
 
@@ -37,17 +40,17 @@ const Navbar = () => {
         <ul className={`navbar-links ${menuOpen ? 'open' : ''}`}>
           <li>
             <NavLink to="/" onClick={closeMenu} id="nav-home">
-               Početna
+              🏠 Početna
             </NavLink>
           </li>
           <li>
             <NavLink to="/predmeti" onClick={closeMenu} id="nav-predmeti">
-               Predmeti
+              📖 Predmeti
             </NavLink>
           </li>
           <li>
             <NavLink to="/predavaci" onClick={closeMenu} id="nav-predavaci">
-               Predavači
+              👨‍🏫 Predavači
             </NavLink>
           </li>
 
@@ -55,12 +58,12 @@ const Navbar = () => {
             <>
               <li>
                 <NavLink to="/zakazivanje" onClick={closeMenu} id="nav-zakazivanje">
-                   Zakaži termin
+                  📅 Zakaži termin
                 </NavLink>
               </li>
               <li>
                 <NavLink to="/moji-termini" onClick={closeMenu} id="nav-moji-termini">
-                   Moji termini
+                  📋 Moji termini
                 </NavLink>
               </li>
             </>
@@ -70,7 +73,7 @@ const Navbar = () => {
             <>
               <li>
                 <NavLink to="/admin" onClick={closeMenu} id="nav-admin">
-                   Admin Panel
+                  ⚙️ Admin Panel
                 </NavLink>
               </li>
             </>
@@ -93,12 +96,12 @@ const Navbar = () => {
             <>
               <li>
                 <span className="navbar-user-badge">
-                  {user?.role === 'admin' ? '' : ''} {user?.ime}
+                  {user?.role === 'admin' ? '🛡️' : '👤'} {user?.ime}
                 </span>
               </li>
               <li>
                 <button onClick={handleLogout} className="btn-logout" id="nav-logout">
-                   Odjava
+                  🚪 Odjava
                 </button>
               </li>
             </>

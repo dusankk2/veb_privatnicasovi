@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import {
-  apiGetPredmeti,
-  apiGetPredavaci,
-  apiGetDostupniTermini,
-  apiCreateTermin,
-} from '../services/api';
+import { useSelector } from 'react-redux';
+import { useGetPredmetiQuery } from '../slices/predmetiApiSlice';
+import { useGetPredavaciQuery } from '../slices/predavaciApiSlice';
+import { useGetDostupniTerminiQuery, useCreateTerminMutation } from '../slices/terminiApiSlice';
 
 const STEPS = [
   { key: 'predmet', label: 'Predmet' },
@@ -17,24 +14,24 @@ const STEPS = [
 ];
 
 const PAYMENT_OPTIONS = [
-  { value: 'kartica', label: ' Kartica', desc: 'Platite kreditnom ili debitnom karticom' },
-  { value: 'gotovina', label: 'Gotovina', desc: 'Plaćanje gotovinom pre početka časa' },
-  { value: 'paypal', label: '🅿 PayPal', desc: 'Platite putem PayPal naloga' },
+  { value: 'kartica', label: '💳 Kartica', desc: 'Platite kreditnom ili debitnom karticom' },
+  { value: 'gotovina', label: '💵 Gotovina', desc: 'Plaćanje gotovinom pre početka časa' },
+  { value: 'paypal', label: '🅿️ PayPal', desc: 'Platite putem PayPal naloga' },
 ];
 
 const Zakazivanje = () => {
-  const { user } = useAuth();
+  const { userInfo: user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const [step, setStep] = useState(0);
-  const [predmeti, setPredmeti] = useState([]);
-  const [predavaci, setPredavaci] = useState([]);
-  const [dostupniTermini, setDostupniTermini] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+
+  const { data: predmeti = [], isLoading: loadingPredmeti } = useGetPredmetiQuery();
+  const { data: predavaci = [], isLoading: loadingPredavaci } = useGetPredavaciQuery();
+  const [createTermin] = useCreateTerminMutation();
 
   // Selected values
   const [selectedPredmet, setSelectedPredmet] = useState(null);
@@ -42,40 +39,21 @@ const Zakazivanje = () => {
   const [selectedTermin, setSelectedTermin] = useState(null);
   const [selectedPlacanje, setSelectedPlacanje] = useState('');
 
+  // Set initial selected item from URL when data loads
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [predmetiData, predavaciData] = await Promise.all([
-          apiGetPredmeti(),
-          apiGetPredavaci(),
-        ]);
-        setPredmeti(predmetiData);
-        setPredavaci(predavaciData);
-
-        // Pre-select predmet from URL
-        const predmetId = searchParams.get('predmet');
-        if (predmetId) {
-          const found = predmetiData.find((p) => p._id === predmetId);
-          if (found) {
-            setSelectedPredmet(found);
-            setStep(1);
-          }
-        }
-      } catch (err) {
-        console.error('Greška:', err);
-      } finally {
-        setLoading(false);
+    const predmetId = searchParams.get('predmet');
+    if (predmetId && predmeti.length > 0 && step === 0) {
+      const found = predmeti.find((p) => p._id === predmetId);
+      if (found) {
+        setSelectedPredmet(found);
+        setStep(1);
       }
-    };
-    fetchData();
-  }, [searchParams]);
-
-  // Fetch available time slots when predavac is selected
-  useEffect(() => {
-    if (selectedPredavac) {
-      apiGetDostupniTermini(selectedPredavac._id).then(setDostupniTermini);
     }
-  }, [selectedPredavac]);
+  }, [searchParams, predmeti, step]);
+
+  const { data: dostupniTermini = [] } = useGetDostupniTerminiQuery(selectedPredavac?._id, {
+    skip: !selectedPredavac,
+  });
 
   const handleSelectPredmet = (predmet) => {
     setSelectedPredmet(predmet);
@@ -106,22 +84,20 @@ const Zakazivanje = () => {
     setSubmitting(true);
     setError('');
     try {
-      await apiCreateTermin({
+      await createTermin({
         predmetId: selectedPredmet._id,
         predmetNaziv: selectedPredmet.naziv,
         predavacId: selectedPredavac._id,
         predavacIme: selectedPredavac.ime,
-        korisnikId: user._id,
-        korisnikIme: user.ime,
         datum: selectedTermin.datum,
         vreme: selectedTermin.vreme,
         trajanje: selectedPredmet.trajanje,
         nacinPlacanja: selectedPlacanje,
         cena: selectedPredmet.cena,
-      });
+      }).unwrap();
       setSuccess(true);
     } catch (err) {
-      setError(err.message || 'Greška prilikom zakazivanja');
+      setError(err?.data?.message || err.message || 'Greška prilikom zakazivanja');
     } finally {
       setSubmitting(false);
     }
@@ -131,7 +107,7 @@ const Zakazivanje = () => {
     if (step > 0) setStep(step - 1);
   };
 
-  if (loading) {
+  if (loadingPredmeti || loadingPredavaci) {
     return (
       <div className="loading">
         <div className="spinner"></div>
@@ -158,7 +134,7 @@ const Zakazivanje = () => {
                 onClick={() => navigate('/moji-termini')}
                 id="go-to-termini"
               >
-                 Moji termini
+                📋 Moji termini
               </button>
               <button
                 className="btn btn-secondary"
@@ -220,7 +196,7 @@ const Zakazivanje = () => {
         {/* Wizard body */}
         <div className="wizard-body">
           {error && (
-            <div className="alert alert-error"> {error}</div>
+            <div className="alert alert-error">⚠️ {error}</div>
           )}
 
           {/* Step 1: Predmet */}
@@ -397,7 +373,7 @@ const Zakazivanje = () => {
                   disabled={submitting}
                   id="confirm-booking"
                 >
-                  {submitting ? 'Zakazivanje...' : ' Potvrdi zakazivanje'}
+                  {submitting ? 'Zakazivanje...' : '✅ Potvrdi zakazivanje'}
                 </button>
               </div>
             </>

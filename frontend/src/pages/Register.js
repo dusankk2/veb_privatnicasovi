@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { apiRegister } from '../services/api';
+import { useDispatch } from 'react-redux';
+import { useRegisterMutation } from '../slices/usersApiSlice';
+import { setCredentials } from '../slices/authSlice';
 
 const Register = () => {
   const [ime, setIme] = useState('');
@@ -9,9 +10,9 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [registerApi, { isLoading: loading }] = useRegisterMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,15 +33,12 @@ const Register = () => {
       return;
     }
 
-    setLoading(true);
     try {
-      const data = await apiRegister(ime, email, password);
-      login(data.user, data.token);
+      const res = await registerApi({ ime, email, password }).unwrap();
+      dispatch(setCredentials({ ...res.user, token: res.token }));
       navigate('/');
     } catch (err) {
-      setError(err.message || 'Greška prilikom registracije');
-    } finally {
-      setLoading(false);
+      setError(err?.data?.message || err.message || 'Greška prilikom registracije');
     }
   };
 
@@ -48,12 +46,12 @@ const Register = () => {
     <div className="form-page" id="register-page">
       <div className="form-container">
         <div className="form-card">
-          <h2> Kreiraj nalog</h2>
+          <h2>🎓 Kreiraj nalog</h2>
           <p className="form-subtitle">Registruj se i zakaži svoj prvi čas</p>
 
           {error && (
             <div className="alert alert-error" id="register-error">
-               {error}
+              ⚠️ {error}
             </div>
           )}
 
@@ -112,7 +110,7 @@ const Register = () => {
               disabled={loading}
               id="register-submit"
             >
-              {loading ? 'Registracija...' : ' Registruj se'}
+              {loading ? 'Registracija...' : '✅ Registruj se'}
             </button>
           </form>
 

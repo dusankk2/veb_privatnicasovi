@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import ProtectedRoute from './components/common/ProtectedRoute';
@@ -24,8 +24,7 @@ import AdminTermini from './pages/admin/AdminTermini';
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <BrowserRouter>
         <Navbar />
         <main>
           <Routes>
@@ -93,8 +92,7 @@ function App() {
           </Routes>
         </main>
         <Footer />
-      </BrowserRouter>
-    </AuthProvider>
+    </BrowserRouter>
   );
 }
 

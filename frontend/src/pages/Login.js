@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { apiLogin } from '../services/api';
+import { useDispatch } from 'react-redux';
+import { useLoginMutation } from '../slices/usersApiSlice';
+import { setCredentials } from '../slices/authSlice';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [loginApi, { isLoading: loading }] = useLoginMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,15 +21,12 @@ const Login = () => {
       return;
     }
 
-    setLoading(true);
     try {
-      const data = await apiLogin(email, password);
-      login(data.user, data.token);
-      navigate(data.user.role === 'admin' ? '/admin' : '/');
+      const res = await loginApi({ email, password }).unwrap();
+      dispatch(setCredentials({ ...res.user, token: res.token }));
+      navigate(res.user.role === 'admin' ? '/admin' : '/');
     } catch (err) {
-      setError(err.message || 'Greška prilikom prijave');
-    } finally {
-      setLoading(false);
+      setError(err?.data?.message || err.message || 'Greška prilikom prijave');
     }
   };
 
@@ -36,12 +34,12 @@ const Login = () => {
     <div className="form-page" id="login-page">
       <div className="form-container">
         <div className="form-card">
-          <h2>Dobrodošli nazad</h2>
+          <h2>👋 Dobrodošli nazad</h2>
           <p className="form-subtitle">Prijavite se na vaš nalog</p>
 
           {error && (
             <div className="alert alert-error" id="login-error">
-               {error}
+              ⚠️ {error}
             </div>
           )}
 
@@ -76,7 +74,7 @@ const Login = () => {
               disabled={loading}
               id="login-submit"
             >
-              {loading ? 'Prijavljivanje...' : ' Prijavi se'}
+              {loading ? 'Prijavljivanje...' : '🔐 Prijavi se'}
             </button>
           </form>
 
@@ -86,7 +84,7 @@ const Login = () => {
           </div>
 
           <div className="alert alert-info mt-3" style={{ fontSize: '0.8rem' }}>
-             Demo nalozi: <strong>admin@privatnicasovi.rs</strong> (admin) |{' '}
+            💡 Demo nalozi: <strong>admin@privatnicasovi.rs</strong> (admin) |{' '}
             <strong>petar@gmail.com</strong> (korisnik) — bilo koja lozinka
           </div>
         </div>

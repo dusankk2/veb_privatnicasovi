@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
 
 const Home = () => {
-  const { isAuth } = useAuth();
+  const { userInfo: user } = useSelector((state) => state.auth);
+  const isAuth = !!user;
 
   return (
     <>
@@ -10,7 +11,7 @@ const Home = () => {
       <section className="hero" id="hero-section">
         <div className="hero-content">
           <div className="hero-badge">
-             Platforma za online učenje
+            ✨ Platforma za online učenje
           </div>
           <h1>
             Pronađi svog idealnog{' '}
@@ -22,7 +23,7 @@ const Home = () => {
           </p>
           <div className="hero-buttons">
             <Link to="/predmeti" className="btn btn-primary btn-lg" id="hero-cta-predmeti">
-               Pregledaj predmete
+              📖 Pregledaj predmete
             </Link>
             {!isAuth ? (
               <Link to="/register" className="btn btn-secondary btn-lg" id="hero-cta-register">
@@ -30,7 +31,7 @@ const Home = () => {
               </Link>
             ) : (
               <Link to="/zakazivanje" className="btn btn-secondary btn-lg" id="hero-cta-zakazivanje">
-                 Zakaži termin →
+                📅 Zakaži termin →
               </Link>
             )}
           </div>
@@ -65,7 +66,7 @@ const Home = () => {
 
         <div className="features-grid">
           <div className="feature-card">
-            <div className="feature-icon"></div>
+            <div className="feature-icon">📖</div>
             <h3>Pregledaj predmete</h3>
             <p>
               Istraži našu ponudu predmeta - od matematike i fizike do
@@ -74,7 +75,7 @@ const Home = () => {
           </div>
 
           <div className="feature-card">
-            <div className="feature-icon"></div>
+            <div className="feature-icon">👨‍🏫</div>
             <h3>Odaberi predavača</h3>
             <p>
               Pogledaj profile predavača, njihove kvalifikacije, ocene i iskustvo.
@@ -83,7 +84,7 @@ const Home = () => {
           </div>
 
           <div className="feature-card">
-            <div className="feature-icon"></div>
+            <div className="feature-icon">📅</div>
             <h3>Zakaži termin</h3>
             <p>
               Izaberi datum i vreme koje ti odgovara. Odaberi način plaćanja
@@ -92,7 +93,7 @@ const Home = () => {
           </div>
 
           <div className="feature-card">
-            <div className="feature-icon"></div>
+            <div className="feature-icon">💳</div>
             <h3>Fleksibilno plaćanje</h3>
             <p>
               Podržavamo više načina plaćanja: karticom, gotovinom ili putem
@@ -101,7 +102,7 @@ const Home = () => {
           </div>
 
           <div className="feature-card">
-            <div className="feature-icon"></div>
+            <div className="feature-icon">📋</div>
             <h3>Prati termine</h3>
             <p>
               Pregled svih zakazanih, završenih i otkazanih termina na jednom
@@ -110,7 +111,7 @@ const Home = () => {
           </div>
 
           <div className="feature-card">
-            <div className="feature-icon"></div>
+            <div className="feature-icon">🛡️</div>
             <h3>Administracija</h3>
             <p>
               Administratori upravljaju predmetima, predavačima i terminima.
@@ -133,7 +134,7 @@ const Home = () => {
             </Link>
           ) : (
             <Link to="/zakazivanje" className="btn btn-primary btn-lg" id="cta-zakazivanje">
-              Zakaži termin 
+              📅 Zakaži termin →
             </Link>
           )}
         </div>

@@ -1,27 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { apiGetPredmeti } from '../services/api';
+import { useSelector } from 'react-redux';
+import { useGetPredmetiQuery } from '../slices/predmetiApiSlice';
 
 const Predmeti = () => {
-  const [predmeti, setPredmeti] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { userInfo: user } = useSelector((state) => state.auth);
+  const isAuth = !!user;
+  const { data: predmeti = [], isLoading: loading, isError } = useGetPredmetiQuery();
   const [search, setSearch] = useState('');
-  const { isAuth } = useAuth();
-
-  useEffect(() => {
-    const fetchPredmeti = async () => {
-      try {
-        const data = await apiGetPredmeti();
-        setPredmeti(data);
-      } catch (err) {
-        console.error('Greška:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPredmeti();
-  }, []);
 
   const filtered = predmeti.filter(
     (p) =>
@@ -33,6 +19,14 @@ const Predmeti = () => {
     return (
       <div className="loading">
         <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="alert alert-danger text-center mt-4">
+        Došlo je do greške prilikom učitavanja predmeta.
       </div>
     );
   }
