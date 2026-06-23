@@ -215,7 +215,7 @@ const handleApiCall = async (apiCallFn, mockFallbackFn, actionName) => {
       console.warn(`⚠️ [API] Backend nije dostupan za akciju "${actionName}". Koristim MOCK podatke.`);
       return await mockFallbackFn();
     }
-    // Ako je server odgovorio nekom specifičnom greškom (npr. 400, 401, 403, 404), baci je dalje
+    
     throw new Error(error.response?.data?.message || error.message);
   }
 };
