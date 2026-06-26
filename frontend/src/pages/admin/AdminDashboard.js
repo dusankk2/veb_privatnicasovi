@@ -1,33 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { apiGetPredmeti, apiGetPredavaci, apiGetTermini } from '../../services/api';
+import { useGetPredmetiQuery } from '../../slices/predmetiApiSlice';
+import { useGetPredavaciQuery } from '../../slices/predavaciApiSlice';
+import { useGetTerminiQuery } from '../../slices/terminiApiSlice';
 
 const AdminDashboard = () => {
-  const [stats, setStats] = useState({ predmeti: 0, predavaci: 0, termini: 0, zakazani: 0 });
-  const [loading, setLoading] = useState(true);
+  const { data: predmeti = [], isLoading: loadingPredmeti } = useGetPredmetiQuery();
+  const { data: predavaci = [], isLoading: loadingPredavaci } = useGetPredavaciQuery();
+  const { data: termini = [], isLoading: loadingTermini } = useGetTerminiQuery();
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const [predmeti, predavaci, termini] = await Promise.all([
-          apiGetPredmeti(),
-          apiGetPredavaci(),
-          apiGetTermini(),
-        ]);
-        setStats({
-          predmeti: predmeti.length,
-          predavaci: predavaci.length,
-          termini: termini.length,
-          zakazani: termini.filter((t) => t.status === 'zakazan').length,
-        });
-      } catch (err) {
-        console.error('Greška:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchStats();
-  }, []);
+  const loading = loadingPredmeti || loadingPredavaci || loadingTermini;
+  
+  const stats = {
+    predmeti: predmeti.length,
+    predavaci: predavaci.length,
+    termini: termini.length,
+    zakazani: termini.filter((t) => t.status === 'zakazan').length,
+  };
 
   if (loading) {
     return (
@@ -41,7 +30,7 @@ const AdminDashboard = () => {
     <div className="page" id="admin-dashboard">
       <div className="page-header">
         <div>
-          <h1> Admin Panel</h1>
+          <h1>️ Admin Panel</h1>
           <p>Upravljanje sistemom za privatne časove</p>
         </div>
       </div>
@@ -54,7 +43,7 @@ const AdminDashboard = () => {
           <div className="stat-label">Predmeta</div>
         </div>
         <div className="stat-card" id="stat-predavaci">
-          <div className="stat-icon"></div>
+          <div className="stat-icon">‍</div>
           <div className="stat-value">{stats.predavaci}</div>
           <div className="stat-label">Predavača</div>
         </div>
@@ -85,7 +74,7 @@ const AdminDashboard = () => {
         </Link>
 
         <Link to="/admin/predavaci" className="card" style={{ textDecoration: 'none' }} id="admin-link-predavaci">
-          <div className="feature-icon"></div>
+          <div className="feature-icon">‍</div>
           <h3 className="card-title">Upravljanje predavačima</h3>
           <p className="text-muted" style={{ fontSize: '0.9rem' }}>
             Upravljaj profilima i podacima predavača.

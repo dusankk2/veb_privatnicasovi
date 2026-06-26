@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
+import { useGetPredavaciQuery } from '../../slices/predavaciApiSlice';
 import {
-  apiGetPredmeti,
-  apiCreatePredmet,
-  apiUpdatePredmet,
-  apiDeletePredmet,
-  apiGetPredavaci,
-} from '../../services/api';
+  useGetPredmetiQuery,
+  useCreatePredmetMutation,
+  useUpdatePredmetMutation,
+  useDeletePredmetMutation,
+} from '../../slices/predmetiApiSlice';
 
 const AdminPredmeti = () => {
-  const [predmeti, setPredmeti] = useState([]);
-  const [predavaci, setPredavaci] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: predmeti = [], isLoading: loadingPredmeti } = useGetPredmetiQuery();
+  const { data: predavaci = [], isLoading: loadingPredavaci } = useGetPredavaciQuery();
+  const [createPredmet] = useCreatePredmetMutation();
+  const [updatePredmet] = useUpdatePredmetMutation();
+  const [deletePredmetMutation] = useDeletePredmetMutation();
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState({
@@ -22,24 +24,7 @@ const AdminPredmeti = () => {
     trajanje: '60',
   });
 
-  const fetchData = async () => {
-    try {
-      const [predmetiData, predavaciData] = await Promise.all([
-        apiGetPredmeti(),
-        apiGetPredavaci(),
-      ]);
-      setPredmeti(predmetiData);
-      setPredavaci(predavaciData);
-    } catch (err) {
-      console.error('Greška:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const openCreate = () => {
     setEditingId(null);
@@ -76,29 +61,26 @@ const AdminPredmeti = () => {
 
     try {
       if (editingId) {
-        await apiUpdatePredmet(editingId, data);
+        await updatePredmet({ id: editingId, ...data }).unwrap();
       } else {
-        await apiCreatePredmet(data);
+        await createPredmet(data).unwrap();
       }
       setShowModal(false);
-      setLoading(true);
-      await fetchData();
     } catch (err) {
-      alert('Greška: ' + err.message);
+      alert('Greška: ' + (err?.data?.message || err.message));
     }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Da li ste sigurni da želite da obrišete ovaj predmet?')) return;
     try {
-      await apiDeletePredmet(id);
-      setPredmeti(predmeti.filter((p) => p._id !== id));
+      await deletePredmetMutation(id).unwrap();
     } catch (err) {
       alert('Greška prilikom brisanja');
     }
   };
 
-  if (loading) {
+  if (loadingPredmeti || loadingPredavaci) {
     return (
       <div className="loading">
         <div className="spinner"></div>
@@ -110,11 +92,11 @@ const AdminPredmeti = () => {
     <div className="page" id="admin-predmeti-page">
       <div className="page-header">
         <div>
-          <h1>📖 Upravljanje predmetima</h1>
+          <h1> Upravljanje predmetima</h1>
           <p>Dodaj, izmeni ili obriši predmete</p>
         </div>
         <button className="btn btn-primary" onClick={openCreate} id="add-predmet-btn">
-          ➕ Dodaj predmet
+           Dodaj predmet
         </button>
       </div>
 
@@ -147,14 +129,14 @@ const AdminPredmeti = () => {
                       onClick={() => openEdit(p)}
                       id={`edit-predmet-${p._id}`}
                     >
-                      ✏️ Izmeni
+                      ️ Izmeni
                     </button>
                     <button
                       className="btn btn-danger btn-sm"
                       onClick={() => handleDelete(p._id)}
                       id={`delete-predmet-${p._id}`}
                     >
-                      🗑️ Obriši
+                      ️ Obriši
                     </button>
                   </div>
                 </td>
@@ -168,7 +150,7 @@ const AdminPredmeti = () => {
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()} id="predmet-modal">
-            <h3>{editingId ? '✏️ Izmeni predmet' : '➕ Novi predmet'}</h3>
+            <h3>{editingId ? '️ Izmeni predmet' : ' Novi predmet'}</h3>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label>Naziv predmeta</label>

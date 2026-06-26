@@ -1,22 +1,22 @@
 import { useState, useEffect } from 'react';
-import { useGetMojiTerminiQuery, useDeleteTerminMutation } from '../slices/terminiApiSlice';
+import { useGetMojiTerminiQuery, useUpdateTerminStatusMutation } from '../slices/terminiApiSlice';
 
 const statusConfig = {
-  zakazan: { badge: 'badge-primary', label: '📅 Zakazan' },
-  zavrsen: { badge: 'badge-success', label: '✅ Završen' },
-  otkazan: { badge: 'badge-danger', label: '❌ Otkazan' },
+  zakazan: { badge: 'badge-primary', label: ' Zakazan' },
+  zavrsen: { badge: 'badge-success', label: ' Završen' },
+  otkazan: { badge: 'badge-danger', label: ' Otkazan' },
 };
 
 const MojiTermini = () => {
   const [filter, setFilter] = useState('svi');
   
   const { data: termini = [], isLoading: loading, isError } = useGetMojiTerminiQuery();
-  const [deleteTermin] = useDeleteTerminMutation();
+  const [updateTerminStatus] = useUpdateTerminStatusMutation();
 
   const handleCancel = async (id) => {
     if (!window.confirm('Da li ste sigurni da želite da otkažete termin?')) return;
     try {
-      await deleteTermin(id).unwrap();
+      await updateTerminStatus({ id, status: 'otkazan' }).unwrap();
     } catch (err) {
       alert('Greška prilikom otkazivanja');
     }
@@ -46,7 +46,7 @@ const MojiTermini = () => {
     <div className="page" id="moji-termini-page">
       <div className="page-header">
         <div>
-          <h1>📋 Moji termini</h1>
+          <h1> Moji termini</h1>
           <p>Pregled svih tvojih zakazanih privatnih časova</p>
         </div>
       </div>

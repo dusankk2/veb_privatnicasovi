@@ -34,12 +34,12 @@ const Login = () => {
     <div className="form-page" id="login-page">
       <div className="form-container">
         <div className="form-card">
-          <h2>👋 Dobrodošli nazad</h2>
+          <h2> Dobrodošli nazad</h2>
           <p className="form-subtitle">Prijavite se na vaš nalog</p>
 
           {error && (
             <div className="alert alert-error" id="login-error">
-              ⚠️ {error}
+              ️ {error}
             </div>
           )}
 
@@ -74,7 +74,7 @@ const Login = () => {
               disabled={loading}
               id="login-submit"
             >
-              {loading ? 'Prijavljivanje...' : '🔐 Prijavi se'}
+              {loading ? 'Prijavljivanje...' : ' Prijavi se'}
             </button>
           </form>
 
@@ -83,10 +83,7 @@ const Login = () => {
             <Link to="/register">Registrujte se</Link>
           </div>
 
-          <div className="alert alert-info mt-3" style={{ fontSize: '0.8rem' }}>
-            💡 Demo nalozi: <strong>admin@privatnicasovi.rs</strong> (admin) |{' '}
-            <strong>petar@gmail.com</strong> (korisnik) — bilo koja lozinka
-          </div>
+
         </div>
       </div>
     </div>

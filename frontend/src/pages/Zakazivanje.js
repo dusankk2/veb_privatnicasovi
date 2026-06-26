@@ -4,6 +4,8 @@ import { useSelector } from 'react-redux';
 import { useGetPredmetiQuery } from '../slices/predmetiApiSlice';
 import { useGetPredavaciQuery } from '../slices/predavaciApiSlice';
 import { useGetDostupniTerminiQuery, useCreateTerminMutation } from '../slices/terminiApiSlice';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
+import PayPalPayment from '../components/common/PayPalPayment';
 
 const STEPS = [
   { key: 'predmet', label: 'Predmet' },
@@ -14,9 +16,9 @@ const STEPS = [
 ];
 
 const PAYMENT_OPTIONS = [
-  { value: 'kartica', label: '💳 Kartica', desc: 'Platite kreditnom ili debitnom karticom' },
-  { value: 'gotovina', label: '💵 Gotovina', desc: 'Plaćanje gotovinom pre početka časa' },
-  { value: 'paypal', label: '🅿️ PayPal', desc: 'Platite putem PayPal naloga' },
+  { value: 'kartica', label: ' Kartica', desc: 'Platite kreditnom ili debitnom karticom' },
+  { value: 'gotovina', label: ' Gotovina', desc: 'Plaćanje gotovinom pre početka časa' },
+  { value: 'paypal', label: '️ PayPal', desc: 'Platite putem PayPal naloga' },
 ];
 
 const Zakazivanje = () => {
@@ -80,7 +82,7 @@ const Zakazivanje = () => {
     setStep(4);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (paypalData = null) => {
     setSubmitting(true);
     setError('');
     try {
@@ -94,6 +96,11 @@ const Zakazivanje = () => {
         trajanje: selectedPredmet.trajanje,
         nacinPlacanja: selectedPlacanje,
         cena: selectedPredmet.cena,
+        ...(paypalData ? {
+          paypalOrderId: paypalData.orderId,
+          paypalTransactionId: paypalData.transactionId,
+          paypalStatus: 'completed'
+        } : {})
       }).unwrap();
       setSuccess(true);
     } catch (err) {
@@ -120,7 +127,7 @@ const Zakazivanje = () => {
       <div className="page" id="zakazivanje-success">
         <div className="wizard">
           <div className="wizard-body text-center" style={{ padding: '60px 36px' }}>
-            <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🎉</div>
+            <div style={{ fontSize: '4rem', marginBottom: '20px' }}></div>
             <h2>Termin uspešno zakazan!</h2>
             <p className="text-muted mt-2" style={{ fontSize: '1rem' }}>
               {selectedPredmet.naziv} sa {selectedPredavac.ime}
@@ -134,7 +141,7 @@ const Zakazivanje = () => {
                 onClick={() => navigate('/moji-termini')}
                 id="go-to-termini"
               >
-                📋 Moji termini
+                 Moji termini
               </button>
               <button
                 className="btn btn-secondary"
@@ -148,7 +155,7 @@ const Zakazivanje = () => {
                 }}
                 id="zakazivanje-new"
               >
-                ➕ Novi termin
+                 Novi termin
               </button>
             </div>
           </div>
@@ -170,7 +177,7 @@ const Zakazivanje = () => {
     <div className="page" id="zakazivanje-page">
       <div className="page-header" style={{ justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <h1>📅 Zakazivanje termina</h1>
+          <h1> Zakazivanje termina</h1>
           <p>Prati korake i zakaži svoj privatni čas</p>
         </div>
       </div>
@@ -186,7 +193,7 @@ const Zakazivanje = () => {
               }`}
             >
               <span className="wizard-step-number">
-                {i < step ? '✓' : i + 1}
+                {i < step ? '' : i + 1}
               </span>
               {s.label}
             </div>
@@ -196,7 +203,7 @@ const Zakazivanje = () => {
         {/* Wizard body */}
         <div className="wizard-body">
           {error && (
-            <div className="alert alert-error">⚠️ {error}</div>
+            <div className="alert alert-error">️ {error}</div>
           )}
 
           {/* Step 1: Predmet */}
@@ -246,7 +253,7 @@ const Zakazivanje = () => {
                     >
                       <div>
                         <div className="payment-label">
-                          {p.ime} ⭐ {p.ocena}
+                          {p.ime}  {p.ocena}
                         </div>
                         <div className="payment-desc">{p.biografija}</div>
                       </div>
@@ -367,14 +374,27 @@ const Zakazivanje = () => {
                 <button className="btn btn-secondary" onClick={goBack}>
                   ← Nazad
                 </button>
-                <button
-                  className="btn btn-success"
-                  onClick={handleSubmit}
-                  disabled={submitting}
-                  id="confirm-booking"
-                >
-                  {submitting ? 'Zakazivanje...' : '✅ Potvrdi zakazivanje'}
-                </button>
+                {selectedPlacanje === 'paypal' ? (
+                  <div style={{ minWidth: '200px' }}>
+                    <PayPalScriptProvider options={{ 'client-id': 'test', components: 'buttons', currency: 'USD' }}>
+                      <PayPalPayment
+                        cena={selectedPredmet.cena}
+                        predmetNaziv={selectedPredmet.naziv}
+                        onSuccess={(res) => handleSubmit(res)}
+                        onError={(errMsg) => setError(errMsg)}
+                      />
+                    </PayPalScriptProvider>
+                  </div>
+                ) : (
+                  <button
+                    className="btn btn-success"
+                    onClick={() => handleSubmit(null)}
+                    disabled={submitting}
+                    id="confirm-booking"
+                  >
+                    {submitting ? 'Zakazivanje...' : ' Potvrdi zakazivanje'}
+                  </button>
+                )}
               </div>
             </>
           )}

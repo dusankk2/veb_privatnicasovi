@@ -1,24 +1,9 @@
-import { useState, useEffect } from 'react';
-import { apiGetPredavaci } from '../services/api';
+import { useState } from 'react';
+import { useGetPredavaciQuery } from '../slices/predavaciApiSlice';
 
 const Predavaci = () => {
-  const [predavaci, setPredavaci] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-
-  useEffect(() => {
-    const fetchPredavaci = async () => {
-      try {
-        const data = await apiGetPredavaci();
-        setPredavaci(data);
-      } catch (err) {
-        console.error('Greška:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPredavaci();
-  }, []);
+  const { data: predavaci = [], isLoading: loading, isError } = useGetPredavaciQuery();
 
   const filtered = predavaci.filter(
     (p) =>
@@ -31,6 +16,14 @@ const Predavaci = () => {
     return (
       <div className="loading">
         <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="alert alert-danger text-center mt-4">
+        Došlo je do greške prilikom učitavanja predavača.
       </div>
     );
   }

@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-
-
 const api = axios.create({
   baseURL: 'http://localhost:5000/api',
   headers: {
@@ -22,164 +20,27 @@ api.interceptors.request.use((config) => {
 // ============================================================
 // MOCK PODACI (Fallback)
 // ============================================================
-
 const mockPredmeti = [
-  {
-    _id: '1',
-    naziv: 'Matematika',
-    opis: 'Osnove matematike, algebra, geometrija, analiza. Priprema za sve nivoe obrazovanja.',
-    predavacId: '1',
-    predavacIme: 'Prof. Marko Petrović',
-    cena: 1500,
-    trajanje: 60,
-  },
-  {
-    _id: '2',
-    naziv: 'Fizika',
-    opis: 'Mehanika, termodinamika, elektromagnetizam. Eksperimentalni i teorijski pristup.',
-    predavacId: '2',
-    predavacIme: 'Dr. Ana Jovanović',
-    cena: 1800,
-    trajanje: 60,
-  },
-  {
-    _id: '3',
-    naziv: 'Programiranje',
-    opis: 'Uvod u programiranje, JavaScript, Python, strukture podataka i algoritmi.',
-    predavacId: '3',
-    predavacIme: 'Ing. Nikola Đorđević',
-    cena: 2000,
-    trajanje: 90,
-  },
-  {
-    _id: '4',
-    naziv: 'Engleski jezik',
-    opis: 'Konverzacija, gramatika, priprema za Cambridge i IELTS ispite.',
-    predavacId: '4',
-    predavacIme: 'Prof. Jelena Nikolić',
-    cena: 1200,
-    trajanje: 60,
-  },
-  {
-    _id: '5',
-    naziv: 'Hemija',
-    opis: 'Opšta, organska i neorganska hemija. Priprema za prijemne ispite.',
-    predavacId: '2',
-    predavacIme: 'Dr. Ana Jovanović',
-    cena: 1600,
-    trajanje: 60,
-  },
-  {
-    _id: '6',
-    naziv: 'Baze podataka',
-    opis: 'SQL, NoSQL, modelovanje podataka, MongoDB, PostgreSQL.',
-    predavacId: '3',
-    predavacIme: 'Ing. Nikola Đorđević',
-    cena: 2200,
-    trajanje: 90,
-  },
+  { _id: '1', naziv: 'Matematika', opis: 'Osnove matematike, algebra, geometrija, analiza. Priprema za sve nivoe obrazovanja.', predavacId: '1', predavacIme: 'Prof. Marko Petrović', cena: 1500, trajanje: 60, },
+  { _id: '2', naziv: 'Fizika', opis: 'Mehanika, termodinamika, elektromagnetizam. Eksperimentalni i teorijski pristup.', predavacId: '2', predavacIme: 'Dr. Ana Jovanović', cena: 1800, trajanje: 60, },
+  { _id: '3', naziv: 'Programiranje', opis: 'Uvod u programiranje, JavaScript, Python, strukture podataka i algoritmi.', predavacId: '3', predavacIme: 'Ing. Nikola Đorđević', cena: 2000, trajanje: 90, },
+  { _id: '4', naziv: 'Engleski jezik', opis: 'Konverzacija, gramatika, priprema za Cambridge i IELTS ispite.', predavacId: '4', predavacIme: 'Prof. Jelena Nikolić', cena: 1200, trajanje: 60, },
+  { _id: '5', naziv: 'Hemija', opis: 'Opšta, organska i neorganska hemija. Priprema za prijemne ispite.', predavacId: '2', predavacIme: 'Dr. Ana Jovanović', cena: 1600, trajanje: 60, },
+  { _id: '6', naziv: 'Baze podataka', opis: 'SQL, NoSQL, modelovanje podataka, MongoDB, PostgreSQL.', predavacId: '3', predavacIme: 'Ing. Nikola Đorđević', cena: 2200, trajanje: 90, },
 ];
 
 const mockPredavaci = [
-  {
-    _id: '1',
-    ime: 'Prof. Marko Petrović',
-    email: 'marko@privatnicasovi.rs',
-    biografija: 'Profesor matematike sa 15 godina iskustva u nastavi. Specijalizacija za pripremu prijemnih ispita na tehničkim fakultetima.',
-    predmeti: ['Matematika'],
-    ocena: 4.8,
-    brojCasova: 230,
-  },
-  {
-    _id: '2',
-    ime: 'Dr. Ana Jovanović',
-    email: 'ana@privatnicasovi.rs',
-    biografija: 'Doktor fizičkih nauka, predaje fiziku i hemiju. Iskustvo u radu sa srednjoškolcima i studentima.',
-    predmeti: ['Fizika', 'Hemija'],
-    ocena: 4.9,
-    brojCasova: 185,
-  },
-  {
-    _id: '3',
-    ime: 'Ing. Nikola Đorđević',
-    email: 'nikola@privatnicasovi.rs',
-    biografija: 'Software inženjer sa iskustvom u IT industriji. Predaje programiranje i baze podataka počtnicima i naprednim studentima.',
-    predmeti: ['Programiranje', 'Baze podataka'],
-    ocena: 4.7,
-    brojCasova: 150,
-  },
-  {
-    _id: '4',
-    ime: 'Prof. Jelena Nikolić',
-    email: 'jelena@privatnicasovi.rs',
-    biografija: 'Diplomirani anglista sa sertifikatom CELTA. Priprema kandidate za međunarodne ispite engleskog jezika.',
-    predmeti: ['Engleski jezik'],
-    ocena: 4.9,
-    brojCasova: 310,
-  },
+  { _id: '1', ime: 'Prof. Marko Petrović', email: 'marko@privatnicasovi.rs', biografija: 'Profesor matematike sa 15 godina iskustva u nastavi. Specijalizacija za pripremu prijemnih ispita na tehničkim fakultetima.', predmeti: ['Matematika'], ocena: 4.8, brojCasova: 230, },
+  { _id: '2', ime: 'Dr. Ana Jovanović', email: 'ana@privatnicasovi.rs', biografija: 'Doktor fizičkih nauka, predaje fiziku i hemiju. Iskustvo u radu sa srednjoškolcima i studentima.', predmeti: ['Fizika', 'Hemija'], ocena: 4.9, brojCasova: 185, },
+  { _id: '3', ime: 'Ing. Nikola Đorđević', email: 'nikola@privatnicasovi.rs', biografija: 'Software inženjer sa iskustvom u IT industriji. Predaje programiranje i baze podataka počtnicima i naprednim studentima.', predmeti: ['Programiranje', 'Baze podataka'], ocena: 4.7, brojCasova: 150, },
+  { _id: '4', ime: 'Prof. Jelena Nikolić', email: 'jelena@privatnicasovi.rs', biografija: 'Diplomirani anglista sa sertifikatom CELTA. Priprema kandidate za međunarodne ispite engleskog jezika.', predmeti: ['Engleski jezik'], ocena: 4.9, brojCasova: 310, },
 ];
 
 const mockTermini = [
-  {
-    _id: 't1',
-    predmetId: '1',
-    predmetNaziv: 'Matematika',
-    predavacId: '1',
-    predavacIme: 'Prof. Marko Petrović',
-    korisnikId: 'u1',
-    korisnikIme: 'Petar Simić',
-    datum: '2026-06-02',
-    vreme: '10:00',
-    trajanje: 60,
-    status: 'zakazan',
-    nacinPlacanja: 'kartica',
-    cena: 1500,
-  },
-  {
-    _id: 't2',
-    predmetId: '3',
-    predmetNaziv: 'Programiranje',
-    predavacId: '3',
-    predavacIme: 'Ing. Nikola Đorđević',
-    korisnikId: 'u1',
-    korisnikIme: 'Petar Simić',
-    datum: '2026-06-03',
-    vreme: '14:00',
-    trajanje: 90,
-    status: 'zakazan',
-    nacinPlacanja: 'gotovina',
-    cena: 2000,
-  },
-  {
-    _id: 't3',
-    predmetId: '2',
-    predmetNaziv: 'Fizika',
-    predavacId: '2',
-    predavacIme: 'Dr. Ana Jovanović',
-    korisnikId: 'u2',
-    korisnikIme: 'Milica Ilić',
-    datum: '2026-05-28',
-    vreme: '16:00',
-    trajanje: 60,
-    status: 'zavrsen',
-    nacinPlacanja: 'kartica',
-    cena: 1800,
-  },
-  {
-    _id: 't4',
-    predmetId: '4',
-    predmetNaziv: 'Engleski jezik',
-    predavacId: '4',
-    predavacIme: 'Prof. Jelena Nikolić',
-    korisnikId: 'u2',
-    korisnikIme: 'Milica Ilić',
-    datum: '2026-06-05',
-    vreme: '11:00',
-    trajanje: 60,
-    status: 'zakazan',
-    nacinPlacanja: 'paypal',
-    cena: 1200,
-  },
+  { _id: 't1', predmetId: '1', predmetNaziv: 'Matematika', predavacId: '1', predavacIme: 'Prof. Marko Petrović', korisnikId: 'u1', korisnikIme: 'Petar Simić', datum: '2026-06-02', vreme: '10:00', trajanje: 60, status: 'zakazan', nacinPlacanja: 'kartica', cena: 1500, },
+  { _id: 't2', predmetId: '3', predmetNaziv: 'Programiranje', predavacId: '3', predavacIme: 'Ing. Nikola Đorđević', korisnikId: 'u1', korisnikIme: 'Petar Simić', datum: '2026-06-03', vreme: '14:00', trajanje: 90, status: 'zakazan', nacinPlacanja: 'gotovina', cena: 2000, },
+  { _id: 't3', predmetId: '2', predmetNaziv: 'Fizika', predavacId: '2', predavacIme: 'Dr. Ana Jovanović', korisnikId: 'u2', korisnikIme: 'Milica Ilić', datum: '2026-05-28', vreme: '16:00', trajanje: 60, status: 'zavrsen', nacinPlacanja: 'kartica', cena: 1800, },
+  { _id: 't4', predmetId: '4', predmetNaziv: 'Engleski jezik', predavacId: '4', predavacIme: 'Prof. Jelena Nikolić', korisnikId: 'u2', korisnikIme: 'Milica Ilić', datum: '2026-06-05', vreme: '11:00', trajanje: 60, status: 'zakazan', nacinPlacanja: 'paypal', cena: 1200, },
 ];
 
 const mockKorisnici = [
@@ -189,21 +50,10 @@ const mockKorisnici = [
 ];
 
 const dostupniTermini = [
-  { datum: '2026-06-02', vreme: '09:00' },
-  { datum: '2026-06-02', vreme: '10:00' },
-  { datum: '2026-06-02', vreme: '11:00' },
-  { datum: '2026-06-02', vreme: '14:00' },
-  { datum: '2026-06-02', vreme: '15:00' },
-  { datum: '2026-06-03', vreme: '09:00' },
-  { datum: '2026-06-03', vreme: '10:00' },
-  { datum: '2026-06-03', vreme: '13:00' },
-  { datum: '2026-06-03', vreme: '14:00' },
-  { datum: '2026-06-04', vreme: '10:00' },
-  { datum: '2026-06-04', vreme: '11:00' },
-  { datum: '2026-06-04', vreme: '16:00' },
-  { datum: '2026-06-05', vreme: '09:00' },
-  { datum: '2026-06-05', vreme: '11:00' },
-  { datum: '2026-06-05', vreme: '15:00' },
+  { datum: '2026-06-02', vreme: '09:00' }, { datum: '2026-06-02', vreme: '10:00' }, { datum: '2026-06-02', vreme: '11:00' }, { datum: '2026-06-02', vreme: '14:00' }, { datum: '2026-06-02', vreme: '15:00' },
+  { datum: '2026-06-03', vreme: '09:00' }, { datum: '2026-06-03', vreme: '10:00' }, { datum: '2026-06-03', vreme: '13:00' }, { datum: '2026-06-03', vreme: '14:00' },
+  { datum: '2026-06-04', vreme: '10:00' }, { datum: '2026-06-04', vreme: '11:00' }, { datum: '2026-06-04', vreme: '16:00' },
+  { datum: '2026-06-05', vreme: '09:00' }, { datum: '2026-06-05', vreme: '11:00' }, { datum: '2026-06-05', vreme: '15:00' },
 ];
 
 // Helper za proveru mrežnih grešaka i prelazak na mock
@@ -212,10 +62,9 @@ const handleApiCall = async (apiCallFn, mockFallbackFn, actionName) => {
     return await apiCallFn();
   } catch (error) {
     if (error.code === 'ERR_NETWORK' || !error.response || error.response.status === 502 || error.response.status === 504) {
-      console.warn(`⚠️ [API] Backend nije dostupan za akciju "${actionName}". Koristim MOCK podatke.`);
+      console.warn(`[API] Backend nije dostupan za akciju "${actionName}". Koristim MOCK podatke.`);
       return await mockFallbackFn();
     }
-    
     throw new Error(error.response?.data?.message || error.message);
   }
 };

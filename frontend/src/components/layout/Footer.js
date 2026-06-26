@@ -11,7 +11,9 @@ const Footer = () => {
           <li><a href="/predmeti">Predmeti</a></li>
           <li><a href="/predavaci">Predavači</a></li>
         </ul>
-        
+        <div className="footer-copy">
+           {new Date().getFullYear()} Privatni Časovi. Sva prava zadržana. | Projektni zadatak
+        </div>
       </div>
     </footer>
   );

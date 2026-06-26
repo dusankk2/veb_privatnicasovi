@@ -1406,3 +1406,5 @@ textarea.form-control {
 .flex-wrap { flex-wrap: wrap; }
 .items-center { align-items: center; }
 .justify-between { justify-content: space-between; }
+.paypal-container { margin-top: 1rem; }
+.paypal-sandbox-notice { background-color: var(--warning-bg); padding: 0.5rem; border-radius: var(--radius-sm); }

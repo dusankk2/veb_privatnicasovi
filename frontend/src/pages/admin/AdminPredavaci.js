@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import {
-  apiGetPredavaci,
-  apiCreatePredavac,
-  apiUpdatePredavac,
-  apiDeletePredavac,
-} from '../../services/api';
+  useGetPredavaciQuery,
+  useCreatePredavacMutation,
+  useUpdatePredavacMutation,
+  useDeletePredavacMutation,
+} from '../../slices/predavaciApiSlice';
 
 const AdminPredavaci = () => {
-  const [predavaci, setPredavaci] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: predavaci = [], isLoading: loading } = useGetPredavaciQuery();
+  const [createPredavac] = useCreatePredavacMutation();
+  const [updatePredavac] = useUpdatePredavacMutation();
+  const [deletePredavacMutation] = useDeletePredavacMutation();
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState({
@@ -20,20 +22,7 @@ const AdminPredavaci = () => {
     brojCasova: '0',
   });
 
-  const fetchData = async () => {
-    try {
-      const data = await apiGetPredavaci();
-      setPredavaci(data);
-    } catch (err) {
-      console.error('Greška:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const openCreate = () => {
     setEditingId(null);
@@ -65,23 +54,20 @@ const AdminPredavaci = () => {
 
     try {
       if (editingId) {
-        await apiUpdatePredavac(editingId, data);
+        await updatePredavac({ id: editingId, ...data }).unwrap();
       } else {
-        await apiCreatePredavac(data);
+        await createPredavac(data).unwrap();
       }
       setShowModal(false);
-      setLoading(true);
-      await fetchData();
     } catch (err) {
-      alert('Greška: ' + err.message);
+      alert('Greška: ' + (err?.data?.message || err.message));
     }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Da li ste sigurni da želite da obrišete ovog predavača?')) return;
     try {
-      await apiDeletePredavac(id);
-      setPredavaci(predavaci.filter((p) => p._id !== id));
+      await deletePredavacMutation(id).unwrap();
     } catch (err) {
       alert('Greška prilikom brisanja');
     }
@@ -99,11 +85,11 @@ const AdminPredavaci = () => {
     <div className="page" id="admin-predavaci-page">
       <div className="page-header">
         <div>
-          <h1>👨‍🏫 Upravljanje predavačima</h1>
+          <h1>‍ Upravljanje predavačima</h1>
           <p>Dodaj, izmeni ili obriši predavače</p>
         </div>
         <button className="btn btn-primary" onClick={openCreate} id="add-predavac-btn">
-          ➕ Dodaj predavača
+           Dodaj predavača
         </button>
       </div>
 
@@ -146,14 +132,14 @@ const AdminPredavaci = () => {
                       onClick={() => openEdit(p)}
                       id={`edit-predavac-${p._id}`}
                     >
-                       Izmeni
+                      ️ Izmeni
                     </button>
                     <button
                       className="btn btn-danger btn-sm"
                       onClick={() => handleDelete(p._id)}
                       id={`delete-predavac-${p._id}`}
                     >
-                       Obriši
+                      ️ Obriši
                     </button>
                   </div>
                 </td>
@@ -167,7 +153,7 @@ const AdminPredavaci = () => {
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()} id="predavac-modal">
-            <h3>{editingId ? ' Izmeni predavača' : '➕ Novi predavač'}</h3>
+            <h3>{editingId ? '️ Izmeni predavača' : ' Novi predavač'}</h3>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label>Ime i prezime</label>

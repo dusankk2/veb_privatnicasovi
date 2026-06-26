@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
-import { apiGetTermini, apiUpdateTerminStatus, apiDeleteTermin } from '../../services/api';
+import {
+  useGetTerminiQuery,
+  useUpdateTerminStatusMutation,
+  useDeleteTerminMutation,
+} from '../../slices/terminiApiSlice';
 
 const statusConfig = {
   zakazan: { badge: 'badge-primary', label: ' Zakazan' },
@@ -8,29 +12,17 @@ const statusConfig = {
 };
 
 const AdminTermini = () => {
-  const [termini, setTermini] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: termini = [], isLoading: loading } = useGetTerminiQuery();
+  const [updateStatus] = useUpdateTerminStatusMutation();
+  const [deleteTerminMutation] = useDeleteTerminMutation();
   const [filterStatus, setFilterStatus] = useState('svi');
   const [filterPredmet, setFilterPredmet] = useState('');
 
-  useEffect(() => {
-    const fetchTermini = async () => {
-      try {
-        const data = await apiGetTermini();
-        setTermini(data);
-      } catch (err) {
-        console.error('Greška:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTermini();
-  }, []);
+
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-      const updated = await apiUpdateTerminStatus(id, newStatus);
-      setTermini(termini.map((t) => (t._id === id ? updated : t)));
+      await updateStatus({ id, status: newStatus }).unwrap();
     } catch (err) {
       alert('Greška prilikom ažuriranja statusa');
     }
@@ -39,8 +31,7 @@ const AdminTermini = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Da li ste sigurni da želite da obrišete ovaj termin?')) return;
     try {
-      await apiDeleteTermin(id);
-      setTermini(termini.filter((t) => t._id !== id));
+      await deleteTerminMutation(id).unwrap();
     } catch (err) {
       alert('Greška prilikom brisanja');
     }
@@ -67,7 +58,7 @@ const AdminTermini = () => {
     <div className="page" id="admin-termini-page">
       <div className="page-header">
         <div>
-          <h1>Pregled termina</h1>
+          <h1> Pregled termina</h1>
           <p>Svi zakazani termini u sistemu</p>
         </div>
       </div>
@@ -161,7 +152,7 @@ const AdminTermini = () => {
                         onClick={() => handleDelete(t._id)}
                         id={`delete-${t._id}`}
                       >
-                        🗑️
+                        ️
                       </button>
                     </div>
                   </td>
